@@ -1,0 +1,618 @@
+/*
+ * AI Login Designer — Admin Page Styles
+ * Scoped to .ailogin-admin to avoid affecting Moodle core UI.
+ */
+
+/* ── Page layout ──────────────────────────────────────────────────────────── */
+.ailogin-admin {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 0 3rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+.ailogin-admin__header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.ailogin-admin__title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ailogin-admin__title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.3rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.ailogin-admin__subtitle {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.ailogin-admin__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* ── Body two-column layout ───────────────────────────────────────────────── */
+.ailogin-admin__body {
+    display: flex;
+    gap: 1.75rem;
+    align-items: flex-start;
+}
+
+.ailogin-admin__col-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.ailogin-admin__col-side {
+    width: 320px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* ── Status card ──────────────────────────────────────────────────────────── */
+.ailogin-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    border: 1px solid transparent;
+}
+
+.ailogin-card--active {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.ailogin-card--inactive {
+    background: #f9fafb;
+    border-color: #e5e7eb;
+    color: #6b7280;
+}
+
+.ailogin-card__icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.ailogin-card__status-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.ailogin-card__meta {
+    font-size: 0.8rem;
+    opacity: 0.75;
+    margin-top: 0.2rem;
+}
+
+/* ── Section heading ──────────────────────────────────────────────────────── */
+.ailogin-section-heading {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 1.25rem 0;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+/* ── Settings form ────────────────────────────────────────────────────────── */
+.ailogin-form {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.ailogin-form__row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ailogin-form__row .ailogin-form__group {
+    flex: 1;
+    min-width: 180px;
+}
+
+.ailogin-form__group {
+    margin-bottom: 1.25rem;
+}
+
+.ailogin-form__label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #374151;
+    margin-bottom: 0.4rem;
+}
+
+.ailogin-form__optional {
+    font-weight: 400;
+    color: #9ca3af;
+    font-size: 0.8rem;
+}
+
+.ailogin-form__hint {
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin: 0.35rem 0 0 0;
+}
+
+/* Colour picker + text input pair */
+.ailogin-color-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ailogin-color-picker {
+    width: 42px;
+    height: 38px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 2px;
+    cursor: pointer;
+    flex-shrink: 0;
+    background: none;
+}
+
+.ailogin-color-text {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+
+.ailogin-form__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #f3f4f6;
+    margin-top: 0.25rem;
+}
+
+/* Save feedback message */
+.ailogin-msg {
+    font-size: 0.875rem;
+}
+
+.ailogin-msg--ok  { color: #059669; }
+.ailogin-msg--err { color: #dc2626; }
+
+/* ── Logo upload widget ───────────────────────────────────────────────────── */
+.ailogin-logo-upload {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.ailogin-logo-upload__input {
+    display: none;
+}
+
+.ailogin-logo-upload__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    background: #f3f4f6;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.ailogin-logo-upload__btn:hover {
+    background: #e9eaec;
+    border-color: #d1d5db;
+}
+
+.ailogin-logo-upload__name {
+    font-size: 0.82rem;
+    color: #6b7280;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ailogin-logo-preview {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.ailogin-logo-preview__img {
+    height: 40px;
+    max-width: 120px;
+    object-fit: contain;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 4px;
+    background: #fff;
+}
+
+.ailogin-logo-preview__remove {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ef4444;
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.ailogin-logo-preview__remove:hover {
+    background: #dc2626;
+}
+
+/* ── AI Generate card ─────────────────────────────────────────────────────── */
+.ailogin-generate-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.4rem;
+}
+
+.ailogin-generate-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+    color: #111827;
+}
+
+.ailogin-generate-card__header h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    color: #111827;
+}
+
+.ailogin-generate-card__desc {
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.55;
+    margin: 0 0 1rem 0;
+}
+
+.ailogin-credit-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.ailogin-generate-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.ailogin-generate-result {
+    margin-top: 0.875rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ailogin-generate-result--ok {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.ailogin-generate-result--err {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.ailogin-credits-remaining {
+    opacity: 0.75;
+}
+
+.ailogin-rationale {
+    font-style: italic;
+    opacity: 0.8;
+    font-size: 0.8rem;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    padding-top: 0.4rem;
+    margin-top: 0.2rem;
+}
+
+.ailogin-generate-card__footer {
+    margin-top: 0.875rem;
+    padding-top: 0.875rem;
+    border-top: 1px solid #f3f4f6;
+    font-size: 0.78rem;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* ── Preview card ─────────────────────────────────────────────────────────── */
+.ailogin-preview-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.ailogin-preview-card__screen {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+/* Mock-up of two-column login layout */
+.ailogin-mock {
+    display: flex;
+    height: 160px;
+}
+
+.ailogin-mock__brand {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1rem;
+    gap: 0.5rem;
+    transition: background 0.3s ease;
+}
+
+.ailogin-mock__logo {
+    width: 36px;
+    height: 10px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 3px;
+}
+
+.ailogin-mock__slogan {
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.95);
+    line-height: 1.2;
+    max-width: 90px;
+}
+
+.ailogin-mock__form {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    padding: 1rem;
+}
+
+.ailogin-mock__card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    padding: 0.875rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ailogin-mock__field {
+    height: 10px;
+    background: #f3f4f6;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+}
+
+.ailogin-mock__btn {
+    height: 12px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.ailogin-preview-card__hint {
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin: 0;
+    text-align: center;
+}
+
+.ailogin-preview-card__hint a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.ailogin-preview-card__hint a:hover {
+    text-decoration: underline;
+}
+
+/* ── Favicon animated-icon row ────────────────────────────────────────────── */
+.ailogin-favicon-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+}
+
+.ailogin-favicon-upload-col {
+    flex-shrink: 0;
+    min-width: 180px;
+}
+
+.ailogin-favicon-desc-col {
+    flex: 1;
+}
+
+.ailogin-favicon-desc {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    background: #f0f4ff;
+    border: 1px solid #c7d4f7;
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.83rem;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.ailogin-favicon-desc svg {
+    flex-shrink: 0;
+    color: #2563EB;
+    margin-top: 2px;
+}
+
+.ailogin-favicon-desc strong {
+    display: block;
+    color: #1e3a8a;
+    margin-bottom: 4px;
+    font-size: 0.86rem;
+}
+
+.ailogin-favicon-desc p {
+    margin: 0;
+    color: #4b5563;
+}
+
+/* ── Diagnostics panel ────────────────────────────────────────────────────── */
+.ailogin-diag {
+    margin: 0 0 18px 0;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    overflow: hidden;
+    font-size: 0.875rem;
+}
+.ailogin-diag--ok {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+}
+.ailogin-diag--warn {
+    border-color: #fca5a5;
+    background: #fff7f7;
+}
+.ailogin-diag__heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+.ailogin-diag--ok .ailogin-diag__heading {
+    background: #dcfce7;
+    color: #166534;
+}
+.ailogin-diag--warn .ailogin-diag__heading {
+    background: #fee2e2;
+    color: #991b1b;
+}
+.ailogin-diag__rows {
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.ailogin-diag__row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 12px;
+    border-radius: 4px;
+    line-height: 1.5;
+}
+.ailogin-diag__row--pass {
+    background: #f0fdf4;
+    color: #166534;
+}
+.ailogin-diag__row--fail {
+    background: #fff1f1;
+    color: #7f1d1d;
+}
+.ailogin-diag__row--warn {
+    background: #fffbeb;
+    color: #78350f;
+}
+.ailogin-diag__icon {
+    font-size: 1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.ailogin-diag__row code {
+    background: rgba(0,0,0,0.08);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    font-family: monospace;
+}
+.ailogin-diag__action-link {
+    display: inline-block;
+    margin-top: 6px;
+    font-weight: 600;
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .ailogin-admin__body {
+        flex-direction: column;
+    }
+    .ailogin-admin__col-side {
+        width: 100%;
+    }
+    .ailogin-favicon-row {
+        flex-direction: column;
+    }
+}
