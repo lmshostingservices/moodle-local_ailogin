@@ -23,7 +23,6 @@ namespace local_ailogin\hook;
 defined('MOODLE_INTERNAL') || die();
 
 class before_standard_head_html_generation {
-
     /**
      * Injects AI Login CSS into the page <head> on the Moodle login page.
      *

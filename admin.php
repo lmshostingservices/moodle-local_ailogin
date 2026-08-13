@@ -21,6 +21,7 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_login();
 require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('local_ailogin_admin');

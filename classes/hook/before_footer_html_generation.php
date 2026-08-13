@@ -36,7 +36,6 @@ namespace local_ailogin\hook;
 defined('MOODLE_INTERNAL') || die();
 
 class before_footer_html_generation {
-
     /**
      * Injects brand CSS and brand-panel JS at the end of <body> on the login page.
      *
