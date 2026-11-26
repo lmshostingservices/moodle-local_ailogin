@@ -41,6 +41,7 @@ $faviconUrl   = get_config('local_ailogin', 'favicon_url')    ?: '';
 $style        = get_config('local_ailogin', 'design_style')   ?: 'elegant';
 $lastGen      = get_config('local_ailogin', 'last_generated');
 $hasCss       = !empty(get_config('local_ailogin', 'generated_css'));
+$ownai        = \local_ailogin\local\byok::enabled();
 
 $lastGenText  = $lastGen ? userdate((int)$lastGen, get_string('strftimedatetimeshort', 'langconfig')) : '';
 
@@ -405,10 +406,17 @@ echo $OUTPUT->header();
                     AI analyses your brand colour and style preference, then creates a bespoke, world-class colour palette and visual style — applied instantly.
                 </p>
 
+                <?php if ($ownai): ?>
+                <div class="ailogin-credit-badge ailogin-credit-badge--ownai">
+                    <i class="fa fa-key" aria-hidden="true"></i>
+                    <?php echo get_string('byok_badge', 'local_ailogin'); ?>
+                </div>
+                <?php else: ?>
                 <div class="ailogin-credit-badge">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     25 AI credits per generation
                 </div>
+                <?php endif; ?>
 
                 <button id="ailogin-generate-btn" class="btn btn-primary btn-block ailogin-generate-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
@@ -715,7 +723,8 @@ echo $OUTPUT->header();
 
     if (generateBtn) {
         generateBtn.addEventListener('click', function () {
-            if (!confirm('Generate a new AI design? This will cost 25 AI credits and replace the current design.')) {
+            if (!confirm(<?php echo json_encode($ownai ? get_string('byok_confirm', 'local_ailogin')
+                    : 'Generate a new AI design? This will cost 25 AI credits and replace the current design.'); ?>)) {
                 return;
             }
             generateBtn.disabled = true;
