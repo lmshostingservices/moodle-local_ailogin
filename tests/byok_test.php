@@ -27,6 +27,7 @@ use local_ailogin\local\byok;
  * @package    local_ailogin
  * @copyright  2026 LMS Hosting Services
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \local_ailogin\local\byok
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(byok::class)]
 final class byok_test extends \advanced_testcase {
