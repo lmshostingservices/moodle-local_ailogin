@@ -54,23 +54,29 @@ final class byok {
      */
     public static function design(array $p): array {
         \core_php_time_limit::raise(300);
-        $primaryColor = array_key_exists('primaryColor', $p) && $p['primaryColor'] !== null ? $p['primaryColor'] : '#2563EB';
+        $primarycolor = array_key_exists('primaryColor', $p) && $p['primaryColor'] !== null ? $p['primaryColor'] : '#2563EB';
         $style = array_key_exists('style', $p) && $p['style'] !== null ? $p['style'] : 'elegant';
         $slogan = array_key_exists('slogan', $p) && $p['slogan'] !== null ? $p['slogan'] : '';
-        $siteName = array_key_exists('siteName', $p) && $p['siteName'] !== null ? $p['siteName'] : '';
-        if (!is_string($primaryColor) || !preg_match('/^#[0-9a-fA-F]{3,6}$/', $primaryColor)
+        $sitename = array_key_exists('siteName', $p) && $p['siteName'] !== null ? $p['siteName'] : '';
+        if (
+            !is_string($primarycolor)
+            || !preg_match('/^#[0-9a-fA-F]{3,6}$/', $primarycolor)
                 || !in_array($style, ['elegant', 'bold', 'warm', 'dark', 'vibrant'], true)
-                || !is_string($slogan) || self::js_len($slogan) > 150 || !is_string($siteName) || self::js_len($siteName) > 100) {
+                || !is_string($slogan)
+                || self::js_len($slogan) > 150
+                || !is_string($sitename)
+                    || self::js_len($sitename) > 100
+        ) {
             return ['ok' => false, 'error' => get_string('error_generate', 'local_ailogin')];
         }
-        [$systemMessage, $userMessage] = self::prompts($primaryColor, $style, $slogan, $siteName);
+        [$systemmessage, $usermessage] = self::prompts($primarycolor, $style, $slogan, $sitename);
         try {
-            $cssRaw = self::ai($systemMessage, $userMessage, 1200, 0.65);
+            $cssraw = self::ai($systemmessage, $usermessage, 1200, 0.65);
         } catch (\Throwable $e) {
             return ['ok' => false, 'error' => self::message($e)];
         }
-        $css = self::js_trim(preg_replace('/\n?```$/i', '', preg_replace('/^```[a-z]*\n?/i', '', $cssRaw, 1), 1));
-        $rationale = strtoupper(substr($style, 0, 1)) . substr($style, 1) . ' palette based on ' . $primaryColor
+        $css = self::js_trim(preg_replace('/\n?\x60{3}$/i', '', preg_replace('/^\x60{3}[a-z]*\n?/i', '', $cssraw, 1), 1));
+        $rationale = strtoupper(substr($style, 0, 1)) . substr($style, 1) . ' palette based on ' . $primarycolor
             . ' — gradient and accent tones derived for maximum contrast and visual harmony.';
         return ['ok' => true, 'css' => $css, 'rationale' => $rationale, 'byok' => true];
     }
@@ -84,52 +90,92 @@ final class byok {
      * @param string $siteName Site name.
      * @return string[] [system, user]
      */
-    public static function prompts(string $primaryColor, string $style, string $slogan, string $siteName): array {
-        $styleConfigs = [
-            'elegant' => ['brief' => 'Obsidian Minimal — editorial restraint in the tradition of Linear, Notion, and Apple. The left panel is deep charcoal-to-midnight, almost pure black with a faint cool-blue undertone. A single razor-thin glowing accent rule is the only colour flourish. Typography is everything: the slogan is crisp white on near-black. Maximum breathing room. Nothing extraneous.', 'panelSpec' => ('--ailogin-gradient must be a near-black cool-dark gradient: e.g. linear-gradient(160deg, #07090F 0%, #0C1020 55%, #101828 100%). The primary colour appears ONLY as the accent rule glow and button fill — never as a panel background tone.')],
-            'bold' => ['brief' => 'Corporate Dark — authoritative and decisive, like Stripe\'s enterprise dashboard or Atlassian\'s admin interface. Very dark navy panel, bold 900-weight slogan, primary colour as a single high-contrast piercing accent. Trusted by global organisations. Confident. No ambiguity.', 'panelSpec' => ('--ailogin-gradient must be deep navy: e.g. linear-gradient(160deg, #050C18 0%, #0A1628 55%, #0D1C38 100%). Primary used only for accent rule, button fill, and focus rings. Panel must read as authoritative dark navy — not teal, not purple.')],
-            'warm' => ['brief' => 'Executive Warmth — premium human warmth in the tradition of Webflow and Framer. Rich dark panel with a warm brown-black undertone (NOT blue-black — think aged espresso, not midnight navy). Amber and terracotta accent tones derived from the primary. Feels aspirational, trusted, and human. Used by leading professional-services brands.', 'panelSpec' => ('--ailogin-gradient must be warm near-black: e.g. linear-gradient(160deg, #0D0A07 0%, #181008 55%, #1E1510 100%). The gradient must have a warm brown/amber undertone — no cool blue. Primary-derived glow should feel warm and golden, not cold.')],
-            'dark' => ['brief' => 'Silicon Valley Obsidian — the apex of SaaS design. Vercel, Linear, Figma at their most refined. Pure black-to-near-black panel with a faint mesh quality, primary colour blazing through the darkness like a neon accent. Maximum contrast slogan. Form panel crisp white. Nothing muddy, nothing soft — every edge is intentional.', 'panelSpec' => ('--ailogin-gradient must be near-pure-black: e.g. linear-gradient(160deg, #030305 0%, #06060A 55%, #09090F 100%). Primary accent must be full-intensity and high contrast against this dark. --ailogin-form-bg: #FFFFFF (pure white — maximum contrast with the dark panel). --ailogin-primary-glow must be strong: rgba(R,G,B,0.30).')],
-            'vibrant' => ['brief' => 'Modern Professional — contemporary SaaS confidence like Loom, Intercom, or HubSpot. Deep cool-dark panel with vivid saturated accent energy. A gradient button (primary to primary-dark) adds dynamism. Professional but unmistakably current. Used by fast-growing scale-ups who want to signal momentum and credibility.', 'panelSpec' => ('--ailogin-gradient must be deep cool-dark: e.g. linear-gradient(160deg, #080B14 0%, #0E1422 55%, #121B30 100%). Primary accent is vivid and saturated. Use a gradient on the .ailogin-accent-rule (primary to a 15° shifted analogous hue) via an override rule after :root.')],
+    public static function prompts(string $primarycolor, string $style, string $slogan, string $sitename): array {
+        $styleconfigs = [
+            'elegant' => ['brief' => 'Obsidian Minimal — editorial restraint in the tradition of Linear, Notion, and ' .
+                'Apple. The left panel is deep charcoal-to-midnight, almost pure black with a faint cool-blue undertone. A ' .
+                'single razor-thin glowing accent rule is the only colour flourish. Typography is everything: the slogan is ' .
+                'crisp white on near-black. Maximum breathing room. Nothing extraneous.', 'panelSpec' => ('--ailogin-gradient' .
+                    ' must be a near-black cool-dark gradient: e.g. linear-gradient(160deg, #07090F 0%, #0C1020 55%, #101828 ' .
+                    '100%). The primary colour appears ONLY as the accent rule glow and button fill — never as a panel ' .
+                    'background tone.')],
+            'bold' => ['brief' => 'Corporate Dark — authoritative and decisive, like Stripe\'s enterprise dashboard or ' .
+                'Atlassian\'s admin interface. Very dark navy panel, bold 900-weight slogan, primary colour as a single ' .
+                'high-contrast piercing accent. Trusted by global organisations. Confident. No ambiguity.', 'panelSpec' =>
+                    ('--ailogin-gradient must be deep navy: e.g. linear-gradient(160deg, #050C18 0%, #0A1628 55%, #0D1C38 ' .
+                        '100%). Primary used only for accent rule, button fill, and focus rings. Panel must read as ' .
+                        'authoritative dark navy — not teal, not purple.')],
+            'warm' => ['brief' => 'Executive Warmth — premium human warmth in the tradition of Webflow and Framer. Rich ' .
+                'dark panel with a warm brown-black undertone (NOT blue-black — think aged espresso, not midnight navy). ' .
+                'Amber and terracotta accent tones derived from the primary. Feels aspirational, trusted, and human. Used by ' .
+                'leading professional-services brands.', 'panelSpec' => ('--ailogin-gradient must be warm near-black: e.g. ' .
+                    'linear-gradient(160deg, #0D0A07 0%, #181008 55%, #1E1510 100%). The gradient must have a warm ' .
+                    'brown/amber undertone — no cool blue. Primary-derived glow should feel warm and golden, not cold.')],
+            'dark' => ['brief' => 'Silicon Valley Obsidian — the apex of SaaS design. Vercel, Linear, Figma at their most ' .
+                'refined. Pure black-to-near-black panel with a faint mesh quality, primary colour blazing through the ' .
+                'darkness like a neon accent. Maximum contrast slogan. Form panel crisp white. Nothing muddy, nothing soft ' .
+                '— every edge is intentional.', 'panelSpec' => ('--ailogin-gradient must be near-pure-black: e.g. ' .
+                    'linear-gradient(160deg, #030305 0%, #06060A 55%, #09090F 100%). Primary accent must be full-intensity ' .
+                    'and high contrast against this dark. --ailogin-form-bg: #FFFFFF (pure white — maximum contrast with ' .
+                    'the dark panel). --ailogin-primary-glow must be strong: rgba(R,G,B,0.30).')],
+            'vibrant' => ['brief' => 'Modern Professional — contemporary SaaS confidence like Loom, Intercom, or HubSpot. ' .
+                'Deep cool-dark panel with vivid saturated accent energy. A gradient button (primary to primary-dark) adds ' .
+                'dynamism. Professional but unmistakably current. Used by fast-growing scale-ups who want to signal momentum ' .
+                'and credibility.', 'panelSpec' => ('--ailogin-gradient must be deep cool-dark: e.g. linear-gradient(160deg, ' .
+                    '#080B14 0%, #0E1422 55%, #121B30 100%). Primary accent is vivid and saturated. Use a gradient on the ' .
+                    '.ailogin-accent-rule (primary to a 15° shifted analogous hue) via an override rule after :root.')],
         ];
-        $styleCfg = $styleConfigs[$style] ?? $styleConfigs['elegant'];
-        $hexLong = str_pad(preg_replace('/^#/', '', $primaryColor), 6, '0');
-        $r = hexdec(substr($hexLong, 0, 2));
-        $g = hexdec(substr($hexLong, 2, 2));
-        $b = hexdec(substr($hexLong, 4, 2));
-        $systemMessage = ('You are an elite product designer and CSS engineer at a world-class SaaS company (Vercel / Linear / Stripe calibre). You specialise in authentication UX and login screen design for professional enterprise software.
+        $stylecfg = $styleconfigs[$style] ?? $styleconfigs['elegant'];
+        $hexlong = str_pad(preg_replace('/^#/', '', $primarycolor), 6, '0');
+        $r = hexdec(substr($hexlong, 0, 2));
+        $g = hexdec(substr($hexlong, 2, 2));
+        $b = hexdec(substr($hexlong, 4, 2));
+        $systemmessage = ('You are an elite product designer and CSS engineer at a world-class SaaS company (Vercel / Linear ' .
+            '/ Stripe calibre). You specialise in authentication UX and login screen design for professional enterprise ' .
+            'software.
 
 INVIOLABLE RULES — breaking any rule means automatic rejection:
-1. The left panel gradient (--ailogin-gradient) MUST be a near-black or very dark colour. NEVER derive it from the primary colour. Primary colour is used ONLY for micro-accents: button fill, focus rings, accent rule glow. A primary-coloured panel background is the single most common amateur mistake — it will always be rejected.
+1. The left panel gradient (--ailogin-gradient) MUST be a near-black or very dark colour. NEVER derive it from the primary ' .
+            'colour. Primary colour is used ONLY for micro-accents: button fill, focus rings, accent rule glow. A ' .
+            'primary-coloured panel background is the single most common amateur mistake — it will always be rejected.
 2. All panel gradients must have at least two meaningful tonal stops (e.g. #07090F → #101828) — not a single flat colour.
-3. --ailogin-primary-alpha must be rgba(' . self::js_str($r) . ',' . self::js_str($g) . ',' . self::js_str($b) . ',0.15) — use the EXACT decimal RGB values provided.
-4. --ailogin-primary-glow must be rgba(' . self::js_str($r) . ',' . self::js_str($g) . ',' . self::js_str($b) . ',0.25) — used for the ambient glow orb and accent rule. Increase to 0.30 for dark/vibrant styles.
-5. After the :root block you MAY add CSS overrides for #ailogin-brand, .ailogin-accent-rule, or #ailogin-brand::after — but ONLY subtle, tasteful additions (no external images, no clip-path, no filter: blur on the panel itself).
+3. --ailogin-primary-alpha must be rgba(' . self::js_str($r) . ',' . self::js_str($g) . ',' . self::js_str($b) . ',0.15) — ' .
+        'use the EXACT decimal RGB values provided.
+4. --ailogin-primary-glow must be rgba(' . self::js_str($r) . ',' . self::js_str($g) . ',' . self::js_str($b) . ',0.25) — ' .
+        'used for the ambient glow orb and accent rule. Increase to 0.30 for dark/vibrant styles.
+5. After the :root block you MAY add CSS overrides for #ailogin-brand, .ailogin-accent-rule, or #ailogin-brand::after — ' .
+        'but ONLY subtle, tasteful additions (no external images, no clip-path, no filter: blur on the panel itself).
 6. Output ONLY raw CSS. No markdown code fences. CSS comments /* */ are fine. No prose explanations.');
-        $userMessage = ('Generate a world-class Moodle login page colour scheme.
+        $usermessage = ('Generate a world-class Moodle login page colour scheme.
 
-── SITE ─────────────────────────────────────────────
-Name:     ' . self::js_str(self::js_or($siteName, 'RTO Learning Platform')) . '
+── SITE ' .
+            '─────────────────────────────────────' .
+            '────────
+Name:     ' . self::js_str(self::js_or($sitename, 'RTO Learning Platform')) . '
 Slogan:   "' . self::js_str(self::js_or($slogan, 'Welcome back.')) . '"
-Primary:  ' . self::js_str($primaryColor) . '  (R:' . self::js_str($r) . ' G:' . self::js_str($g) . ' B:' . self::js_str($b) . ')
+Primary:  ' . self::js_str($primarycolor) . '  (R:' . self::js_str($r) . ' G:' . self::js_str($g) . ' B:' . self::js_str($b) .
+        ')
 
 ── STYLE DIRECTION ──────────────────────────────────
-' . self::js_str(mb_strtoupper(self::js_str($style))) . ': ' . self::js_str(self::js_get($styleCfg, 'brief')) . '
+' . self::js_str(mb_strtoupper(self::js_str($style))) . ': ' . self::js_str(self::js_get($stylecfg, 'brief')) . '
 
-Panel rule: ' . self::js_str(self::js_get($styleCfg, 'panelSpec')) . '
+Panel rule: ' . self::js_str(self::js_get($stylecfg, 'panelSpec')) . '
 
 ── REQUIRED CSS CUSTOM PROPERTIES ───────────────────
 Output :root { } containing ALL of the following:
 
---ailogin-primary        ' . self::js_str($primaryColor) . ' (buttons, focus rings, accent rule)
+--ailogin-primary        ' . self::js_str($primarycolor) . ' (buttons, focus rings, accent rule)
 --ailogin-primary-dark   primary darkened 25–35% (hover states, gradient terminus)
---ailogin-primary-alpha  rgba(' . self::js_str($r) . ',' . self::js_str($g) . ',' . self::js_str($b) . ',0.15) (focus ring soft glow — exact values)
---ailogin-primary-glow   rgba(' . self::js_str($r) . ',' . self::js_str($g) . ',' . self::js_str($b) . ',0.25) (ambient orb + accent rule shadow)
+--ailogin-primary-alpha  rgba(' . self::js_str($r) . ',' . self::js_str($g) . ',' . self::js_str($b) . ',0.15) (focus ring ' .
+        'soft glow — exact values)
+--ailogin-primary-glow   rgba(' . self::js_str($r) . ',' . self::js_str($g) . ',' . self::js_str($b) . ',0.25) (ambient orb ' .
+        '+ accent rule shadow)
 --ailogin-gradient       dark panel gradient — MUST follow panel rule above, NOT primary-colour-based
 --ailogin-form-bg        right panel background (light: #F4F6FA, dark style: #FFFFFF)
 --ailogin-card-bg        login card background (#FFFFFF unless design demands otherwise)
 
-── QUALITY BAR ──────────────────────────────────────
+── QUALITY BAR ' .
+        '──────────────────────────────────────
 Ask yourself: would a designer at Vercel or Linear ship this?
 • Left panel = depth and atmosphere — multiple subtle tonal layers, not a flat wash
 • Primary colour = a scalpel not a paintbrush — tiny doses, maximum impact
@@ -137,7 +183,7 @@ Ask yourself: would a designer at Vercel or Linear ship this?
 • The form panel and card should feel clean, spacious, and trustworthy
 
 Start output with: :root {');
-        return [$systemMessage, $userMessage];
+        return [$systemmessage, $usermessage];
     }
 
     /**
@@ -178,13 +224,22 @@ Start output with: :root {');
      * @return string
      */
     private static function js_trim($s): string {
-        return preg_replace('/^[\s\x{00A0}\x{FEFF}\x{1680}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+'
-            . '|[\s\x{00A0}\x{FEFF}\x{1680}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+$/u', '', self::js_str($s));
+        return preg_replace(
+            '/^[\s\x{00A0}\x{FEFF}\x{1680}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+'
+            . '|[\s\x{00A0}\x{FEFF}\x{1680}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+$/u',
+            '',
+            self::js_str($s)
+        );
     }
 
     // JavaScript semantics used by the ported prompt templates (generated with the port).
 
-    /** @param mixed $v @return bool JavaScript truthiness. */
+    /**
+     * Js truthy.
+     *
+     * @param mixed $v
+     * @return bool JavaScript truthiness.
+     */
     private static function js_truthy($v): bool {
         if (is_array($v) || is_object($v)) {
             return true;
@@ -195,17 +250,35 @@ Start output with: :root {');
         return $v !== null && $v !== false && $v !== '' && $v !== 0 && $v !== 0.0;
     }
 
-    /** @param mixed $a @param mixed $b @return mixed a || b */
+    /**
+     * Js or.
+     *
+     * @param mixed $a
+     * @param mixed $b
+     * @return mixed a || b
+     */
     private static function js_or($a, $b) {
         return self::js_truthy($a) ? $a : $b;
     }
 
-    /** @param mixed $a @param mixed $b @return mixed a && b */
+    /**
+     * Js and.
+     *
+     * @param mixed $a
+     * @param mixed $b
+     * @return mixed a && b
+     */
     private static function js_and($a, $b) {
         return self::js_truthy($a) ? $b : $a;
     }
 
-    /** @param mixed $a @param mixed $b @return mixed a + b */
+    /**
+     * Js add.
+     *
+     * @param mixed $a
+     * @param mixed $b
+     * @return mixed a + b
+     */
     private static function js_add($a, $b) {
         if ((is_int($a) || is_float($a)) && (is_int($b) || is_float($b))) {
             return $a + $b;
@@ -213,7 +286,12 @@ Start output with: :root {');
         return self::js_str($a) . self::js_str($b);
     }
 
-    /** @param mixed $v @return string String(v) */
+    /**
+     * Js str.
+     *
+     * @param mixed $v
+     * @return string String(v)
+     */
     private static function js_str($v): string {
         if ($v === null) {
             return 'null';
@@ -232,7 +310,7 @@ Start output with: :root {');
         }
         if (is_array($v)) {
             if ($v === [] || array_keys($v) === range(0, count($v) - 1)) {
-                return implode(',', array_map(function($x) {
+                return implode(',', array_map(function ($x) {
                     return $x === null ? '' : self::js_str($x);
                 }, $v));
             }
@@ -241,7 +319,12 @@ Start output with: :root {');
         return (string) $v;
     }
 
-    /** @param mixed $v @return float Number(v) */
+    /**
+     * Js num.
+     *
+     * @param mixed $v
+     * @return float Number(v)
+     */
     private static function js_num($v) {
         if (is_int($v) || is_float($v)) {
             return $v;
@@ -255,7 +338,13 @@ Start output with: :root {');
         return is_numeric(trim((string) $v)) ? trim((string) $v) + 0 : NAN;
     }
 
-    /** @param mixed $o @param mixed $k @return mixed o[k] or null */
+    /**
+     * Js get.
+     *
+     * @param mixed $o
+     * @param mixed $k
+     * @return mixed o[k] or null
+     */
     private static function js_get($o, $k) {
         if (is_array($o)) {
             return $o[$k] ?? null;
@@ -266,7 +355,12 @@ Start output with: :root {');
         return null;
     }
 
-    /** @param mixed $v @return int .length */
+    /**
+     * Js len.
+     *
+     * @param mixed $v
+     * @return int .length
+     */
     private static function js_len($v): int {
         if (is_array($v)) {
             return count($v);
@@ -274,7 +368,13 @@ Start output with: :root {');
         return strlen(mb_convert_encoding(self::js_str($v), 'UTF-16LE', 'UTF-8')) / 2;
     }
 
-    /** @param mixed $h @param mixed $n @return bool .includes() */
+    /**
+     * Js includes.
+     *
+     * @param mixed $h
+     * @param mixed $n
+     * @return bool .includes()
+     */
     private static function js_includes($h, $n): bool {
         if (is_array($h)) {
             return in_array($n, $h, true);
@@ -282,7 +382,14 @@ Start output with: :root {');
         return strpos(self::js_str($h), self::js_str($n)) !== false;
     }
 
-    /** @param mixed $v @param int $a @param int|null $b @return mixed .slice() on strings (UTF-16) and arrays */
+    /**
+     * Js slice.
+     *
+     * @param mixed $v
+     * @param int $a
+     * @param int|null $b
+     * @return mixed .slice() on strings (UTF-16) and arrays
+     */
     private static function js_slice($v, $a = 0, $b = null) {
         if (is_array($v)) {
             $n = count($v);
@@ -297,7 +404,13 @@ Start output with: :root {');
         return mb_convert_encoding(substr($u, $a * 2, max(0, $b - $a) * 2), 'UTF-8', 'UTF-16LE');
     }
 
-    /** @param mixed $v @param callable $f @return array .map() */
+    /**
+     * Js map.
+     *
+     * @param mixed $v
+     * @param callable $f
+     * @return array .map()
+     */
     private static function js_map($v, callable $f): array {
         $out = [];
         foreach (array_values((array) $v) as $i => $x) {
@@ -306,7 +419,13 @@ Start output with: :root {');
         return $out;
     }
 
-    /** @param mixed $v @param callable $f @return array .filter() */
+    /**
+     * Js filter.
+     *
+     * @param mixed $v
+     * @param callable $f
+     * @return array .filter()
+     */
     private static function js_filter($v, callable $f): array {
         $out = [];
         foreach (array_values((array) $v) as $i => $x) {
@@ -317,7 +436,12 @@ Start output with: :root {');
         return $out;
     }
 
-    /** @param mixed $v @return string typeof */
+    /**
+     * Js typeof.
+     *
+     * @param mixed $v
+     * @return string typeof
+     */
     private static function js_typeof($v): string {
         if (is_string($v)) {
             return 'string';
@@ -331,7 +455,14 @@ Start output with: :root {');
         return $v === null ? 'undefined' : 'object';
     }
 
-    /** @param mixed $s @param string $a @param string $b @return string .replace(string, string) */
+    /**
+     * Js replace first.
+     *
+     * @param mixed $s
+     * @param string $a
+     * @param string $b
+     * @return string .replace(string, string)
+     */
     private static function js_replace_first($s, $a, $b): string {
         $s = self::js_str($s);
         $p = strpos($s, $a);

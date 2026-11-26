@@ -30,6 +30,9 @@ use local_ailogin\local\byok;
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(byok::class)]
 final class byok_test extends \advanced_testcase {
+    /** @var string A Markdown code fence (three backticks). */
+    private const FENCE = "\x60\x60\x60";
+
     /** @var array Requests the mocked provider received. */
     protected $requests = [];
 
@@ -46,7 +49,7 @@ final class byok_test extends \advanced_testcase {
         set_config('testpublickey', base64_encode(sodium_crypto_sign_publickey($pair)), 'local_aiconfig');
         $payload = json_encode(['v' => 1, 'id' => 'lic_t', 'site' => \local_aiconfig\byok\licence::site_host(),
             'plan' => 'pro', 'byok' => true, 'products' => ['*'], 'sub' => 'sub_t', 'exp' => time() + DAYSECS]);
-        $b64 = function(string $s): string {
+        $b64 = function (string $s): string {
             return rtrim(strtr(base64_encode($s), '+/', '-_'), '=');
         };
         set_config('licencekey', $b64($payload) . '.' .
@@ -71,7 +74,7 @@ final class byok_test extends \advanced_testcase {
      */
     protected function answer(?string $answer): void {
         $this->requests = [];
-        $GLOBALS['local_aiconfig_byok_mock'] = function($url, $headers, $body) use ($answer) {
+        $GLOBALS['local_aiconfig_byok_mock'] = function ($url, $headers, $body) use ($answer) {
             $this->requests[] = $body;
             if ($answer === null) {
                 throw new \moodle_exception('byok_providererror', 'local_aiconfig', '', 'Overloaded');
@@ -82,7 +85,7 @@ final class byok_test extends \advanced_testcase {
 
     public function test_design_strips_fences_and_uses_the_brief(): void {
         $this->assertTrue(byok::enabled());
-        $this->answer("```css\n:root { --ailogin-primary: #0f6cbf; }\n```");
+        $this->answer(self::FENCE . "css\n:root { --ailogin-primary: #0f6cbf; }\n" . self::FENCE);
         $out = byok::design(['primaryColor' => '#0f6cbf', 'style' => 'dark', 'slogan' => 'Learn. Work. Thrive.',
             'siteName' => 'Kestrel Ridge Training']);
         $this->assertTrue($out['ok']);
