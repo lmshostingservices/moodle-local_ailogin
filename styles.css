@@ -313,6 +313,9 @@
     margin: 0 0 1rem 0;
 }
 
+.ailogin-credit-badge--ownai {
+    white-space: nowrap;
+}
 .ailogin-credit-badge {
     display: inline-flex;
     align-items: center;

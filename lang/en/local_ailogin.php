@@ -21,6 +21,10 @@ $string['plugindesc']            = 'Transform your Moodle login page into a worl
 
 // Settings
 $string['ailogin_settings']     = 'AI Login Designer Settings';
+$string['byok_badge'] = 'Your own AI · no credits';
+$string['byok_confirm'] = 'Generate a new AI design? It will be written by your own AI (no LMS Labs credits are used) and replace the current design.';
+$string['byok_failed'] = 'Your AI provider could not design the login page: {$a}';
+$string['byok_notavailable'] = 'Bring your own AI is on, but this site\'s AI is not ready. Check Site administration > Plugins > AI Grader Central Config > Bring your own AI.';
 $string['manage']               = 'Manage AI Login';
 
 // Admin page

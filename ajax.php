@@ -164,7 +164,9 @@ try {
         // ── Generate AI design ─────────────────────────────────────────────
         case 'generate': {
             [$siteId, $apiKey] = local_ailogin_get_platform_credentials();
-            if (empty($siteId) || empty($apiKey)) {
+            // Bring your own AI: when this site's licence routes text to its own AI, design the page here.
+            $byok = \local_ailogin\local\byok::enabled();
+            if (!$byok && (empty($siteId) || empty($apiKey))) {
                 echo json_encode(['ok' => false, 'error' => get_string('error_noconfig', 'local_ailogin')]);
                 break;
             }
@@ -178,14 +180,16 @@ try {
             // causing "Course or activity not accessible" exceptions on some versions.
             $siteName = isset($SITE->fullname) ? strip_tags($SITE->fullname) : '';
 
-            $result = local_ailogin_api_post('/api/ai/login-design', [
+            $request = [
                 'siteId'       => $siteId,
                 'apiKey'       => $apiKey,
                 'primaryColor' => $primaryColor,
                 'style'        => $style,
                 'slogan'       => $slogan,
                 'siteName'     => $siteName,
-            ]);
+            ];
+            $result = $byok ? \local_ailogin\local\byok::design($request)
+                : local_ailogin_api_post('/api/ai/login-design', $request);
 
             if (!empty($result['ok']) && !empty($result['css'])) {
                 // Sanitise AI-generated CSS before storing — strip any tag sequences
